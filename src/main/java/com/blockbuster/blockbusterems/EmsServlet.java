@@ -230,6 +230,12 @@ public class EmsServlet extends HttpServlet {
                 margin: 20px 0;
                 text-align: right;
             }
+            
+            .sort-arrow {
+                font-size: 0.8em;
+                margin-left: 4px;
+            }
+                
         """);
         out.println("</style>");
         out.println("</head>");
@@ -274,7 +280,10 @@ public class EmsServlet extends HttpServlet {
                     rs = stmt.executeQuery("SELECT * FROM roles");
                     out.println("<h3>Roles</h3>");
                     out.println("<table id='dataTable' data-sort='asc'>");
-                    out.println("<tr><th onclick='sortTable(0)'>Role ID</th><th onclick='sortTable(1)'>Role Name</th></tr>");
+                    out.println("<tr>\n" +
+                            "    <th onclick=\"sortTable(0, this)\" data-column=\"0\">Role ID <span class=\"sort-arrow\"></span></th>\n" +
+                            "    <th onclick=\"sortTable(1, this)\" data-column=\"1\">Role Name <span class=\"sort-arrow\"></span></th>\n" +
+                            "</tr>\n");
                     while (rs.next()) {
                         out.printf("<tr><td>%d</td><td>%s</td></tr>",
                                 rs.getInt("role_id"),
@@ -287,7 +296,11 @@ public class EmsServlet extends HttpServlet {
                     rs = stmt.executeQuery("SELECT * FROM stores");
                     out.println("<h3>Stores</h3>");
                     out.println("<table id='dataTable' data-sort='asc'>");
-                    out.println("<tr><th onclick='sortTable(0)'>Store ID</th><th onclick='sortTable(1)'>Store Name</th><th onclick='sortTable(2)'>Location</th></tr>");
+                    out.println("<tr>\n" +
+                            "    <th onclick=\"sortTable(0, this)\" data-column=\"0\">Store ID <span class=\"sort-arrow\"></span></th>\n" +
+                            "    <th onclick=\"sortTable(1, this)\" data-column=\"1\">Store Name <span class=\"sort-arrow\"></span></th>\n" +
+                            "    <th onclick=\"sortTable(2, this)\" data-column=\"2\">Location <span class=\"sort-arrow\"></span></th>\n" +
+                            "</tr>\n");
                     while (rs.next()) {
                         out.printf("<tr><td>%d</td><td>%s</td><td>%s</td></tr>",
                                 rs.getInt("store_id"),
@@ -301,7 +314,12 @@ public class EmsServlet extends HttpServlet {
                     rs = stmt.executeQuery("SELECT * FROM shifts");
                     out.println("<h3>Shifts</h3>");
                     out.println("<table id='dataTable' data-sort='asc'>");
-                    out.println("<tr><th onclick='sortTable(0)'>Shift ID</th><th onclick='sortTable(1)'>Start Time</th><th onclick='sortTable(2)'>End Time</th><th onclick='sortTable(3)'>Employee ID</th></tr>");
+                    out.println("<tr>\n" +
+                            "    <th onclick=\"sortTable(0, this)\">Shift ID <span class=\"sort-arrow\"></span></th>\n" +
+                            "    <th onclick=\"sortTable(1, this)\">Start Time <span class=\"sort-arrow\"></span></th>\n" +
+                            "    <th onclick=\"sortTable(2, this)\">End Time <span class=\"sort-arrow\"></span></th>\n" +
+                            "    <th onclick=\"sortTable(3, this)\">Employee ID <span class=\"sort-arrow\"></span></th>\n" +
+                            "</tr>\n");
                     while (rs.next()) {
                         out.printf("<tr><td>%d</td><td>%s</td><td>%s</td><td>%d</td></tr>",
                                 rs.getInt("shift_id"),
@@ -319,13 +337,13 @@ public class EmsServlet extends HttpServlet {
                             "FROM trainings t JOIN employees e ON t.employee_id = e.employee_id");
                     out.println("<h3>Training Records</h3>");
                     out.println("<table id='dataTable' data-sort='asc'>");
-                    out.println("<tr>");
-                    out.println("<th onclick='sortTable(0)'>Training ID</th>");
-                    out.println("<th onclick='sortTable(1)'>Employee ID</th>");
-                    out.println("<th onclick='sortTable(2)'>Name</th>");
-                    out.println("<th onclick='sortTable(3)'>Module</th>");
-                    out.println("<th onclick='sortTable(4)'>Completion Date</th>");
-                    out.println("</tr>");
+                    out.println("<tr>\n" +
+                            "    <th onclick=\"sortTable(0, this)\" data-column=\"0\">Training ID <span class=\"sort-arrow\"></span></th>\n" +
+                            "    <th onclick=\"sortTable(1, this)\" data-column=\"1\">Employee ID <span class=\"sort-arrow\"></span></th>\n" +
+                            "    <th onclick=\"sortTable(2, this)\" data-column=\"2\">Name <span class=\"sort-arrow\"></span></th>\n" +
+                            "    <th onclick=\"sortTable(3, this)\" data-column=\"3\">Module <span class=\"sort-arrow\"></span></th>\n" +
+                            "    <th onclick=\"sortTable(4, this)\" data-column=\"4\">Completion Date <span class=\"sort-arrow\"></span></th>\n" +
+                            "</tr>\n");
                     while (rs.next()) {
                         out.printf("<tr><td>%d</td><td>%d</td><td>%s %s</td><td>%s</td><td>%s</td></tr>",
                                 rs.getInt("training_id"),
@@ -348,14 +366,14 @@ public class EmsServlet extends HttpServlet {
                     rs = stmt.executeQuery("SELECT * FROM employees ORDER BY " + sort + " " + order);
                     out.println("<h3>Employees</h3>");
                     out.println("<table id='dataTable' data-sort='asc'>");
-                    out.println("<tr>");
-                    out.println("<th onclick='sortTable(0)'>ID</th>");
-                    out.println("<th onclick='sortTable(1)'>First Name</th>");
-                    out.println("<th onclick='sortTable(2)'>Last Name</th>");
-                    out.println("<th onclick='sortTable(3)'>Email</th>");
-                    out.println("<th onclick='sortTable(4)'>Store ID</th>");
-                    out.println("<th onclick='sortTable(5)'>Role ID</th>");
-                    out.println("</tr>");
+                    out.println("<tr>\n" +
+                            "    <th onclick=\"sortTable(0, this)\" data-column=\"0\">ID <span class=\"sort-arrow\"></span></th>\n" +
+                            "    <th onclick=\"sortTable(1, this)\" data-column=\"1\">First Name <span class=\"sort-arrow\"></span></th>\n" +
+                            "    <th onclick=\"sortTable(2, this)\" data-column=\"2\">Last Name <span class=\"sort-arrow\"></span></th>\n" +
+                            "    <th onclick=\"sortTable(3, this)\" data-column=\"3\">Email <span class=\"sort-arrow\"></span></th>\n" +
+                            "    <th onclick=\"sortTable(4, this)\" data-column=\"4\">Store ID <span class=\"sort-arrow\"></span></th>\n" +
+                            "    <th onclick=\"sortTable(5, this)\" data-column=\"5\">Role ID <span class=\"sort-arrow\"></span></th>\n" +
+                            "</tr>\n");
                     while (rs.next()) {
                         out.printf("<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%d</td><td>%d</td></tr>",
                                 rs.getString("employee_id"),
@@ -432,27 +450,52 @@ public class EmsServlet extends HttpServlet {
         // Add JavaScript for sorting and modal functionality
         out.println("<script>");
         out.println("""
-            function sortTable(n) {
+            let currentSortColumn = -1;
+            let currentSortDirection = "asc";
+    
+            function sortTable(column, header) {
                 const table = document.getElementById("dataTable");
-                const rows = Array.from(table.rows).slice(1);
-                const isAsc = table.getAttribute("data-sort") !== "asc";
-                
+                const rows = Array.from(table.rows).slice(1); // skip header row
+    
+                // Determine sort direction
+                if (currentSortColumn === column) {
+                    currentSortDirection = (currentSortDirection === "asc") ? "desc" : "asc";
+                } else {
+                    currentSortColumn = column;
+                    currentSortDirection = "asc";
+                }
+    
+                // Sort with numeric and text detection
                 rows.sort((a, b) => {
-                    let cellA = a.cells[n].innerText.trim();
-                    let cellB = b.cells[n].innerText.trim();
-                    
-                    const isNumeric = !isNaN(cellA) && !isNaN(cellB);
-                    
+                    let cellA = a.cells[column].innerText.trim();
+                    let cellB = b.cells[column].innerText.trim();
+    
+                    const numA = parseFloat(cellA.replace(/[^0-9.-]/g, ''));
+                    const numB = parseFloat(cellB.replace(/[^0-9.-]/g, ''));
+                    const isNumeric = !isNaN(numA) && !isNaN(numB);
+    
                     if (isNumeric) {
-                        return (parseFloat(cellA) - parseFloat(cellB)) * (isAsc ? 1 : -1);
+                        return currentSortDirection === "asc" ? numA - numB : numB - numA;
                     } else {
-                        return cellA.localeCompare(cellB) * (isAsc ? 1 : -1);
+                        cellA = cellA.toLowerCase();
+                        cellB = cellB.toLowerCase();
+                        if (cellA < cellB) return currentSortDirection === "asc" ? -1 : 1;
+                        if (cellA > cellB) return currentSortDirection === "asc" ? 1 : -1;
+                        return 0;
                     }
                 });
-                
-                rows.forEach(row => table.appendChild(row));
-                table.setAttribute("data-sort", isAsc ? "asc" : "desc");
-            }
+    
+             // Re-attach rows
+             const tbody = table.tBodies[0];
+             rows.forEach(row => tbody.appendChild(row));
+    
+             // Reset arrows
+             document.querySelectorAll(".sort-arrow").forEach(span => span.textContent = "");
+             const arrowSpan = header.querySelector(".sort-arrow");
+             if (arrowSpan) {
+                 arrowSpan.innerHTML = currentSortDirection === "asc" ? "&uarr;" : "&darr;";
+             }
+         }
             
             // Modal JavaScript
             document.addEventListener('DOMContentLoaded', function() {
