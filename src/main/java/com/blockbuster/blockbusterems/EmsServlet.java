@@ -46,129 +46,146 @@ public class EmsServlet extends HttpServlet {
 
         // Navigation buttons (took out: /employee_management_system_war_exploded/)
         out.println("""
-<nav>
-    <form action="blockbusterEMS" method="get" style="display: inline;">
-        <input type="hidden" name="view" value="employees" />
-        <button type="submit">Employees</button>
-    </form>
-    <form action="blockbusterEMS" method="get" style="display: inline;">
-        <input type="hidden" name="view" value="roles" />
-        <button type="submit">Roles</button>
-    </form>
-    <form action="blockbusterEMS" method="get" style="display: inline;">
-        <input type="hidden" name="view" value="stores" />
-        <button type="submit">Stores</button>
-    </form>
-    <form action="blockbusterEMS" method="get" style="display: inline;">
-        <input type="hidden" name="view" value="shifts" />
-        <button type="submit">Shifts</button>
-    </form>
-    <form action="blockbusterEMS" method="get" style="display: inline;">
-        <input type="hidden" name="view" value="trainings" />
-        <button type="submit">Trainings</button>
-    </form>
-</nav>
-""");
+                <nav>
+                    <form action="blockbusterEMS" method="get" style="display: inline;">
+                        <input type="hidden" name="view" value="employees" />
+                        <button type="submit">Employees</button>
+                    </form>
+                    <form action="blockbusterEMS" method="get" style="display: inline;">
+                        <input type="hidden" name="view" value="roles" />
+                        <button type="submit">Roles</button>
+                    </form>
+                    <form action="blockbusterEMS" method="get" style="display: inline;">
+                        <input type="hidden" name="view" value="stores" />
+                        <button type="submit">Stores</button>
+                    </form>
+                    <form action="blockbusterEMS" method="get" style="display: inline;">
+                        <input type="hidden" name="view" value="shifts" />
+                        <button type="submit">Shifts</button>
+                    </form>
+                    <form action="blockbusterEMS" method="get" style="display: inline;">
+                        <input type="hidden" name="view" value="trainings" />
+                        <button type="submit">Trainings</button>
+                    </form>
+                </nav>
+                """);
 
 
         out.println("""
-<head>
-    <title>Blockbuster EMS</title>
-    <style>
-                                body {
-                                    font-family: Arial, sans-serif;
-                                    background-color: #000033;
-                                    color: #ffffcc;
-                                    margin: 20px;
-                                }
+                <head>
+                    <title>Blockbuster EMS</title>
+                    <style>
+                                                body {
+                                                    font-family: Arial, sans-serif;
+                                                    background-color: #000033;
+                                                    color: #ffffcc;
+                                                    margin: 20px;
+                                                }
                 
-                                h1 {
-                                    color: #ffcc00;
-                                }
+                                                h1 {
+                                                    color: #ffcc00;
+                                                }
                 
-                                nav {
-                                    display: flex;
-                                    flex-wrap: wrap;
-                                    gap: 10px;
-                                    margin-bottom: 20px;
-                                }
+                                                nav {
+                                                    display: flex;
+                                                    flex-wrap: wrap;
+                                                    gap: 10px;
+                                                    margin-bottom: 20px;
+                                                }
                 
-                                nav form {
-                                    display: inline;
-                                }
+                                                nav form {
+                                                    display: inline;
+                                                }
                 
-                                button {
-                                    background-color: #ffcc00;
-                                    color: #000033;
-                                    font-weight: bold;
-                                    border: 2px solid #ffcc00;
-                                    padding: 10px 16px;
-                                    border-radius: 6px;
-                                    cursor: pointer;
-                                    transition: background-color 0.2s ease-in-out, box-shadow 0.2s;
-                                    font-size: 14px;
-                                }
+                                                button {
+                                                    background-color: #ffcc00;
+                                                    color: #000033;
+                                                    font-weight: bold;
+                                                    border: 2px solid #ffcc00;
+                                                    padding: 10px 16px;
+                                                    border-radius: 6px;
+                                                    cursor: pointer;
+                                                    transition: background-color 0.2s ease-in-out, box-shadow 0.2s;
+                                                    font-size: 14px;
+                                                }
                 
-                                button:hover {
-                                    background-color: #ffe066;
-                                    box-shadow: 0 0 5px #ffcc00;
-                                }
+                                                button:hover {
+                                                    background-color: #ffe066;
+                                                    box-shadow: 0 0 5px #ffcc00;
+                                                }
                 
-                                button:focus {
-                                    outline: none;
-                                    box-shadow: 0 0 6px 2px #ffcc00;
-                                }
+                                                button:focus {
+                                                    outline: none;
+                                                    box-shadow: 0 0 6px 2px #ffcc00;
+                                                }
                 
-                                table {
-                                    width: 100%;
-                                    border-collapse: collapse;
-                                    margin-top: 20px;
-                                    background-color: #001144;
-                                }
+                                                table {
+                                                    width: 100%;
+                                                    border-collapse: collapse;
+                                                    margin-top: 20px;
+                                                    background-color: #001144;
+                                                }
                 
-                                th, td {
-                                    border: 1px solid #ffcc00;
-                                    padding: 10px;
-                                    text-align: left;
-                                    color: #ffffff;
-                                }
+                                                th, td {
+                                                    border: 1px solid #ffcc00;
+                                                    padding: 10px;
+                                                    text-align: left;
+                                                    color: #ffffff;
+                                                }
                 
-                                th {
-                                    background-color: #000055;
-                                    cursor: pointer;
-                                }
+                                                th {
+                                                    background-color: #000055;
+                                                    cursor: pointer;
+                                                }
                 
-                                tr:nth-child(even) {
-                                    background-color: #000022;
-                                }
-                            </style>
+                                                tr:nth-child(even) {
+                                                    background-color: #000022;
+                                                }
                 
-    <script>
-                                 function sortTable(n) {
-                                     const table = document.getElementById("dataTable");
-                                     const rows = Array.from(table.rows).slice(1);
-                                     const isAsc = table.getAttribute("data-sort") !== "asc";
+                                                .sort-arrow {
+                                                                    font-size: 0.8em;
+                                                                    margin-left: 4px;
+                                                }
                 
-                                     rows.sort((a, b) => {
-                                         let cellA = a.cells[n].innerText.trim();
-                                         let cellB = b.cells[n].innerText.trim();
+                                            </style>
                 
-                                         const isNumeric = !isNaN(cellA) && !isNaN(cellB);
+                    <script>
+                                                                  function sortTable(columnIndex, clickedHeader) {
+                                                                      const table = document.getElementById("dataTable");
+                                                                      const rows = Array.from(table.rows).slice(1);
+                                                                      const currentSort = table.getAttribute("data-sort-column");
+                                                                      let currentOrder = table.getAttribute("data-sort-order") || "asc";
+                                                                      const isSameColumn = currentSort == columnIndex;
+                                                                      const newOrder = isSameColumn && currentOrder === "asc" ? "desc" : "asc";
+        
+                                                                      rows.sort((a, b) => {
+                                                                          let cellA = a.cells[columnIndex].innerText.trim();
+                                                                          let cellB = b.cells[columnIndex].innerText.trim();
+                                                                          const isNumeric = !isNaN(cellA) && !isNaN(cellB);
+        
+                                                                          if (isNumeric) {
+                                                                              return (parseFloat(cellA) - parseFloat(cellB)) * (newOrder === "asc" ? 1 : -1);
+                                                                          } else {
+                                                                              return cellA.localeCompare(cellB) * (newOrder === "asc" ? 1 : -1);
+                                                                          }
+                                                                      });
+        
+                                                                      rows.forEach(row => table.appendChild(row));
+                                                                      table.setAttribute("data-sort-column", columnIndex);
+                                                                      table.setAttribute("data-sort-order", newOrder);
+        
+                                                                      // Reset arrows
+                                                                      document.querySelectorAll(".sort-arrow").forEach(el => el.textContent = "");
+                                                                      if (clickedHeader) {
+                                                                      clickedHeader.querySelector(".sort-arrow").innerHTML = newOrder === "asc" ? " &uarr;" : " &darr;";
                 
-                                         if (isNumeric) {
-                                             return (parseFloat(cellA) - parseFloat(cellB)) * (isAsc ? 1 : -1);
-                                         } else {
-                                             return cellA.localeCompare(cellB) * (isAsc ? 1 : -1);
-                                         }
-                                     });
+                                                                                                                                            clickedHeader.querySelector(".sort-arrow").innerHTML = newOrder === "asc" ? " &uarr;" : " &darr;";                                                                                                                         }
+                                                                  }
+                                                              </script>
                 
-                                     rows.forEach(row => table.appendChild(row));
-                                     table.setAttribute("data-sort", isAsc ? "asc" : "desc");
-                                 }
-                             </script>
                 
-</head>
-""");
+                </head>
+                """);
 
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -182,7 +199,10 @@ public class EmsServlet extends HttpServlet {
                     rs = stmt.executeQuery("SELECT * FROM roles");
                     out.println("<h3>Roles</h3>");
                     out.println("<table id='dataTable' data-sort='asc'>");
-                    out.println("<tr><th onclick='sortTable(0)'>Role ID</th><th onclick='sortTable(1)'>Role Name</th></tr>");
+                    out.println("<tr>\n" +
+                            "    <th onclick=\"sortTable(0, this)\" data-column=\"0\">Role ID <span class=\"sort-arrow\"></span></th>\n" +
+                            "    <th onclick=\"sortTable(1, this)\" data-column=\"1\">Role Name <span class=\"sort-arrow\"></span></th>\n" +
+                            "</tr>\n");
                     while (rs.next()) {
                         out.printf("<tr><td>%d</td><td>%s</td></tr>",
                                 rs.getInt("role_id"),
@@ -195,7 +215,11 @@ public class EmsServlet extends HttpServlet {
                     rs = stmt.executeQuery("SELECT * FROM stores");
                     out.println("<h3>Stores</h3>");
                     out.println("<table id='dataTable' data-sort='asc'>");
-                    out.println("<tr><th onclick='sortTable(0)'>Store ID</th><th onclick='sortTable(1)'>Store Name</th><th onclick='sortTable(2)'>Location</th></tr>");
+                    out.println("<tr>\n" +
+                            "    <th onclick=\"sortTable(0, this)\" data-column=\"0\">Store ID <span class=\"sort-arrow\"></span></th>\n" +
+                            "    <th onclick=\"sortTable(1, this)\" data-column=\"1\">Store Name <span class=\"sort-arrow\"></span></th>\n" +
+                            "    <th onclick=\"sortTable(2, this)\" data-column=\"2\">Location <span class=\"sort-arrow\"></span></th>\n" +
+                            "</tr>\n");
                     while (rs.next()) {
                         out.printf("<tr><td>%d</td><td>%s</td><td>%s</td></tr>",
                                 rs.getInt("store_id"),
@@ -209,7 +233,12 @@ public class EmsServlet extends HttpServlet {
                     rs = stmt.executeQuery("SELECT * FROM shifts");
                     out.println("<h3>Shifts</h3>");
                     out.println("<table id='dataTable' data-sort='asc'>");
-                    out.println("<tr><th onclick='sortTable(0)'>Shift ID</th><th onclick='sortTable(1)'>Start Time</th><th onclick='sortTable(2)'>End Time</th><th onclick='sortTable(3)'>Employee ID</th></tr>");
+                    out.println("<tr>\n" +
+                            "    <th onclick=\"sortTable(0, this)\">Shift ID <span class=\"sort-arrow\"></span></th>\n" +
+                            "    <th onclick=\"sortTable(1, this)\">Start Time <span class=\"sort-arrow\"></span></th>\n" +
+                            "    <th onclick=\"sortTable(2, this)\">End Time <span class=\"sort-arrow\"></span></th>\n" +
+                            "    <th onclick=\"sortTable(3, this)\">Employee ID <span class=\"sort-arrow\"></span></th>\n" +
+                            "</tr>\n");
                     while (rs.next()) {
                         out.printf("<tr><td>%d</td><td>%s</td><td>%s</td><td>%d</td></tr>",
                                 rs.getInt("shift_id"),
@@ -221,19 +250,18 @@ public class EmsServlet extends HttpServlet {
                     break;
 
 
-
                 case "trainings":
                     rs = stmt.executeQuery("SELECT t.training_id, t.employee_id, e.first_name, e.last_name, t.module_name, t.completion_date " +
                             "FROM trainings t JOIN employees e ON t.employee_id = e.employee_id");
                     out.println("<h3>Training Records</h3>");
                     out.println("<table id='dataTable' data-sort='asc'>");
-                    out.println("<tr>");
-                    out.println("<th onclick='sortTable(0)'>Training ID</th>");
-                    out.println("<th onclick='sortTable(1)'>Employee ID</th>");
-                    out.println("<th onclick='sortTable(2)'>Name</th>");
-                    out.println("<th onclick='sortTable(3)'>Module</th>");
-                    out.println("<th onclick='sortTable(4)'>Completion Date</th>");
-                    out.println("</tr>");
+                    out.println("<tr>\n" +
+                            "    <th onclick=\"sortTable(0, this)\" data-column=\"0\">Training ID <span class=\"sort-arrow\"></span></th>\n" +
+                            "    <th onclick=\"sortTable(1, this)\" data-column=\"1\">Employee ID <span class=\"sort-arrow\"></span></th>\n" +
+                            "    <th onclick=\"sortTable(2, this)\" data-column=\"2\">Name <span class=\"sort-arrow\"></span></th>\n" +
+                            "    <th onclick=\"sortTable(3, this)\" data-column=\"3\">Module <span class=\"sort-arrow\"></span></th>\n" +
+                            "    <th onclick=\"sortTable(4, this)\" data-column=\"4\">Completion Date <span class=\"sort-arrow\"></span></th>\n" +
+                            "</tr>\n");
                     while (rs.next()) {
                         out.printf("<tr><td>%d</td><td>%d</td><td>%s %s</td><td>%s</td><td>%s</td></tr>",
                                 rs.getInt("training_id"),
@@ -252,14 +280,14 @@ public class EmsServlet extends HttpServlet {
                     rs = stmt.executeQuery("SELECT * FROM employees ORDER BY " + sort + " " + order);
                     out.println("<h3>Employees</h3>");
                     out.println("<table id='dataTable' data-sort='asc'>");
-                    out.println("<tr>");
-                    out.println("<th onclick='sortTable(0)'>ID</th>");
-                    out.println("<th onclick='sortTable(1)'>First Name</th>");
-                    out.println("<th onclick='sortTable(2)'>Last Name</th>");
-                    out.println("<th onclick='sortTable(3)'>Email</th>");
-                    out.println("<th onclick='sortTable(4)'>Store ID</th>");
-                    out.println("<th onclick='sortTable(5)'>Role ID</th>");
-                    out.println("</tr>");
+                    out.println("<tr>\n" +
+                            "    <th onclick=\"sortTable(0, this)\" data-column=\"0\">ID <span class=\"sort-arrow\"></span></th>\n" +
+                            "    <th onclick=\"sortTable(1, this)\" data-column=\"1\">First Name <span class=\"sort-arrow\"></span></th>\n" +
+                            "    <th onclick=\"sortTable(2, this)\" data-column=\"2\">Last Name <span class=\"sort-arrow\"></span></th>\n" +
+                            "    <th onclick=\"sortTable(3, this)\" data-column=\"3\">Email <span class=\"sort-arrow\"></span></th>\n" +
+                            "    <th onclick=\"sortTable(4, this)\" data-column=\"4\">Store ID <span class=\"sort-arrow\"></span></th>\n" +
+                            "    <th onclick=\"sortTable(5, this)\" data-column=\"5\">Role ID <span class=\"sort-arrow\"></span></th>\n" +
+                            "</tr>\n");
                     while (rs.next()) {
                         out.printf("<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%d</td><td>%d</td></tr>",
                                 rs.getString("employee_id"),
