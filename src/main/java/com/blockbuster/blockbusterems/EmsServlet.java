@@ -246,7 +246,8 @@ public class EmsServlet extends HttpServlet {
                     out.println("</table>");
                     break;
 
-                case "employees":
+
+                case "employees": //default
                 default:
                     rs = stmt.executeQuery("SELECT * FROM employees ORDER BY " + sort + " " + order);
                     out.println("<h3>Employees</h3>");
