@@ -32,84 +32,144 @@ public class EmsServlet extends HttpServlet {
 
         // Get the 'view' parameter from the URL (e.g., /blockbusterEMS?view=employees)
         String view = request.getParameter("view");
-        if (view == null) view = "employees"; // default view
+        if (view == null) view = "employees";
 
-        // Start of HTML output
-        out.println("""
-    <html>
-    <head>
-        <title>Blockbuster EMS</title>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                background-color: #0a0a0a;
-                color: #f8f8f8;
-                margin: 20px;
-            }
-            h1 {
-                background-color: #002366;
-                color: #FFD700;
-                padding: 10px;
-                border-radius: 5px;
-            }
-            nav button {
-                background-color: #FFD700;
-                color: #002366;
-                border: none;
-                padding: 10px 15px;
-                margin: 5px;
-                border-radius: 4px;
-                cursor: pointer;
-                font-weight: bold;
-            }
-            nav button:hover {
-                background-color: #ffcc00;
-            }
-            .bb-table {
-                width: 100%;
-                border-collapse: collapse;
-                margin-top: 15px;
-            }
-            .bb-table th, .bb-table td {
-                border: 1px solid #ddd;
-                padding: 8px;
-                text-align: left;
-            }
-            .bb-table th {
-                background-color: #002366;
-                color: #FFD700;
-            }
-            .bb-table tr:nth-child(even) {
-                background-color: #1a1a1a;
-            }
-        </style>
-    </head>
-    <body>
-    """);
+        String sort = request.getParameter("sort");
+        String order = request.getParameter("order");
+        if (sort == null) sort = "employee_id"; // default sort
+        if (order == null || (!order.equalsIgnoreCase("asc") && !order.equalsIgnoreCase("desc"))) {
+            order = "asc"; // default order
+        }
+
 
         out.println("<h1>Blockbuster Employee Management System</h1>");
 
         // Navigation buttons (took out: /employee_management_system_war_exploded/)
         out.println("""
-            <nav>
-                <form action="blockbusterEMS" method="get" style="display:inline;">
-                    <button type="submit" name="view" value="employees">Employees</button>
-                </form>
-                <form action="blockbusterEMS" method="get" style="display:inline;">
-                    <button type="submit" name="view" value="roles">Roles</button>
-                </form>
-                <form action="blockbusterEMS" method="get" style="display:inline;">
-                    <button type="submit" name="view" value="stores">Stores</button>
-                </form>
-                <form action="blockbusterEMS" method="get" style="display:inline;">
-                    <button type="submit" name="view" value="shifts">Shifts</button>
-                </form>
-                <form action="blockbusterEMS" method="get" style="display:inline;">
-                    <button type="submit" name="view" value="trainings">Trainings</button>
-                </form>
-            </nav>
-            <hr>
-        """);
+<nav>
+    <form action="blockbusterEMS" method="get" style="display: inline;">
+        <input type="hidden" name="view" value="employees" />
+        <button type="submit">Employees</button>
+    </form>
+    <form action="blockbusterEMS" method="get" style="display: inline;">
+        <input type="hidden" name="view" value="roles" />
+        <button type="submit">Roles</button>
+    </form>
+    <form action="blockbusterEMS" method="get" style="display: inline;">
+        <input type="hidden" name="view" value="stores" />
+        <button type="submit">Stores</button>
+    </form>
+    <form action="blockbusterEMS" method="get" style="display: inline;">
+        <input type="hidden" name="view" value="shifts" />
+        <button type="submit">Shifts</button>
+    </form>
+    <form action="blockbusterEMS" method="get" style="display: inline;">
+        <input type="hidden" name="view" value="trainings" />
+        <button type="submit">Trainings</button>
+    </form>
+</nav>
+""");
+
+
+        out.println("""
+<head>
+    <title>Blockbuster EMS</title>
+    <style>
+                                body {
+                                    font-family: Arial, sans-serif;
+                                    background-color: #000033;
+                                    color: #ffffcc;
+                                    margin: 20px;
+                                }
+                
+                                h1 {
+                                    color: #ffcc00;
+                                }
+                
+                                nav {
+                                    display: flex;
+                                    flex-wrap: wrap;
+                                    gap: 10px;
+                                    margin-bottom: 20px;
+                                }
+                
+                                nav form {
+                                    display: inline;
+                                }
+                
+                                button {
+                                    background-color: #ffcc00;
+                                    color: #000033;
+                                    font-weight: bold;
+                                    border: 2px solid #ffcc00;
+                                    padding: 10px 16px;
+                                    border-radius: 6px;
+                                    cursor: pointer;
+                                    transition: background-color 0.2s ease-in-out, box-shadow 0.2s;
+                                    font-size: 14px;
+                                }
+                
+                                button:hover {
+                                    background-color: #ffe066;
+                                    box-shadow: 0 0 5px #ffcc00;
+                                }
+                
+                                button:focus {
+                                    outline: none;
+                                    box-shadow: 0 0 6px 2px #ffcc00;
+                                }
+                
+                                table {
+                                    width: 100%;
+                                    border-collapse: collapse;
+                                    margin-top: 20px;
+                                    background-color: #001144;
+                                }
+                
+                                th, td {
+                                    border: 1px solid #ffcc00;
+                                    padding: 10px;
+                                    text-align: left;
+                                    color: #ffffff;
+                                }
+                
+                                th {
+                                    background-color: #000055;
+                                    cursor: pointer;
+                                }
+                
+                                tr:nth-child(even) {
+                                    background-color: #000022;
+                                }
+                            </style>
+                
+    <script>
+                                 function sortTable(n) {
+                                     const table = document.getElementById("dataTable");
+                                     const rows = Array.from(table.rows).slice(1);
+                                     const isAsc = table.getAttribute("data-sort") !== "asc";
+                
+                                     rows.sort((a, b) => {
+                                         let cellA = a.cells[n].innerText.trim();
+                                         let cellB = b.cells[n].innerText.trim();
+                
+                                         const isNumeric = !isNaN(cellA) && !isNaN(cellB);
+                
+                                         if (isNumeric) {
+                                             return (parseFloat(cellA) - parseFloat(cellB)) * (isAsc ? 1 : -1);
+                                         } else {
+                                             return cellA.localeCompare(cellB) * (isAsc ? 1 : -1);
+                                         }
+                                     });
+                
+                                     rows.forEach(row => table.appendChild(row));
+                                     table.setAttribute("data-sort", isAsc ? "asc" : "desc");
+                                 }
+                             </script>
+                
+</head>
+""");
+
 
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement()) {
@@ -121,8 +181,8 @@ public class EmsServlet extends HttpServlet {
                 case "roles":
                     rs = stmt.executeQuery("SELECT * FROM roles");
                     out.println("<h3>Roles</h3>");
-                    out.println("<table class='bb-table'>");
-                    out.println("<tr><th>Role ID</th><th>Role Name</th></tr>");
+                    out.println("<table id='dataTable' data-sort='asc'>");
+                    out.println("<tr><th onclick='sortTable(0)'>Role ID</th><th onclick='sortTable(1)'>Role Name</th></tr>");
                     while (rs.next()) {
                         out.printf("<tr><td>%d</td><td>%s</td></tr>",
                                 rs.getInt("role_id"),
@@ -134,8 +194,8 @@ public class EmsServlet extends HttpServlet {
                 case "stores":
                     rs = stmt.executeQuery("SELECT * FROM stores");
                     out.println("<h3>Stores</h3>");
-                    out.println("<table class='bb-table'>");
-                    out.println("<tr><th>Store ID</th><th>Store Name</th><th>Location</th></tr>");
+                    out.println("<table id='dataTable' data-sort='asc'>");
+                    out.println("<tr><th onclick='sortTable(0)'>Store ID</th><th onclick='sortTable(1)'>Store Name</th><th onclick='sortTable(2)'>Location</th></tr>");
                     while (rs.next()) {
                         out.printf("<tr><td>%d</td><td>%s</td><td>%s</td></tr>",
                                 rs.getInt("store_id"),
@@ -148,8 +208,8 @@ public class EmsServlet extends HttpServlet {
                 case "shifts":
                     rs = stmt.executeQuery("SELECT * FROM shifts");
                     out.println("<h3>Shifts</h3>");
-                    out.println("<table class='bb-table'>");
-                    out.println("<tr><th>Shift ID</th><th>Start Time</th><th>End Time</th><th>Employee ID</th></tr>");
+                    out.println("<table id='dataTable' data-sort='asc'>");
+                    out.println("<tr><th onclick='sortTable(0)'>Shift ID</th><th onclick='sortTable(1)'>Start Time</th><th onclick='sortTable(2)'>End Time</th><th onclick='sortTable(3)'>Employee ID</th></tr>");
                     while (rs.next()) {
                         out.printf("<tr><td>%d</td><td>%s</td><td>%s</td><td>%d</td></tr>",
                                 rs.getInt("shift_id"),
@@ -160,12 +220,20 @@ public class EmsServlet extends HttpServlet {
                     out.println("</table>");
                     break;
 
+
+
                 case "trainings":
                     rs = stmt.executeQuery("SELECT t.training_id, t.employee_id, e.first_name, e.last_name, t.module_name, t.completion_date " +
                             "FROM trainings t JOIN employees e ON t.employee_id = e.employee_id");
                     out.println("<h3>Training Records</h3>");
-                    out.println("<table class='bb-table'>");
-                    out.println("<tr><th>Training ID</th><th>Employee ID</th><th>Name</th><th>Module</th><th>Completion Date</th></tr>");
+                    out.println("<table id='dataTable' data-sort='asc'>");
+                    out.println("<tr>");
+                    out.println("<th onclick='sortTable(0)'>Training ID</th>");
+                    out.println("<th onclick='sortTable(1)'>Employee ID</th>");
+                    out.println("<th onclick='sortTable(2)'>Name</th>");
+                    out.println("<th onclick='sortTable(3)'>Module</th>");
+                    out.println("<th onclick='sortTable(4)'>Completion Date</th>");
+                    out.println("</tr>");
                     while (rs.next()) {
                         out.printf("<tr><td>%d</td><td>%d</td><td>%s %s</td><td>%s</td><td>%s</td></tr>",
                                 rs.getInt("training_id"),
@@ -180,10 +248,17 @@ public class EmsServlet extends HttpServlet {
 
                 case "employees":
                 default:
-                    rs = stmt.executeQuery("SELECT * FROM employees");
+                    rs = stmt.executeQuery("SELECT * FROM employees ORDER BY " + sort + " " + order);
                     out.println("<h3>Employees</h3>");
-                    out.println("<table class='bb-table'>");
-                    out.println("<tr><th>ID</th><th>First Name</th><th>Last Name</th><th>Email</th><th>Store ID</th><th>Role ID</th></tr>");
+                    out.println("<table id='dataTable' data-sort='asc'>");
+                    out.println("<tr>");
+                    out.println("<th onclick='sortTable(0)'>ID</th>");
+                    out.println("<th onclick='sortTable(1)'>First Name</th>");
+                    out.println("<th onclick='sortTable(2)'>Last Name</th>");
+                    out.println("<th onclick='sortTable(3)'>Email</th>");
+                    out.println("<th onclick='sortTable(4)'>Store ID</th>");
+                    out.println("<th onclick='sortTable(5)'>Role ID</th>");
+                    out.println("</tr>");
                     while (rs.next()) {
                         out.printf("<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%d</td><td>%d</td></tr>",
                                 rs.getString("employee_id"),
@@ -194,7 +269,6 @@ public class EmsServlet extends HttpServlet {
                                 rs.getInt("role_id"));
                     }
                     out.println("</table>");
-                    break;
             }
 
         } catch (SQLException e) {
@@ -203,5 +277,12 @@ public class EmsServlet extends HttpServlet {
         }
 
         out.println("</body></html>");
+    }
+
+    private String toggleOrder(String currentSort, String currentOrder, String column) {
+        if (column.equals(currentSort)) {
+            return currentOrder.equals("asc") ? "desc" : "asc";
+        }
+        return "asc";
     }
 }
