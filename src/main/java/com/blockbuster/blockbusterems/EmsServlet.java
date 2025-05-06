@@ -43,7 +43,6 @@ public class EmsServlet extends HttpServlet {
                 pstmt.setInt(5, roleId);
 
                 pstmt.executeUpdate();
-                System.out.println(">>> Rows inserted");
 
                 // Redirect back to the employees view
                 response.sendRedirect("blockbusterEMS?view=employees");
@@ -57,7 +56,6 @@ public class EmsServlet extends HttpServlet {
         }
 
         // If we get here, something went wrong, redirect to main page
-        System.out.println(">>> Rows not inserted");
         response.sendRedirect("blockbusterEMS");
     }
 
