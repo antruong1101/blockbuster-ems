@@ -63,6 +63,26 @@ public class EmsServlet extends HttpServlet {
                 e.printStackTrace(out);
             }
         }
+        else if ("deleteEmployee".equals(action)) {
+            int employeeId = Integer.parseInt(request.getParameter("employeeId"));
+
+            try (Connection conn = DatabaseConnection.getConnection();
+                 PreparedStatement pstmt = conn.prepareStatement(
+                         "DELETE FROM employees WHERE employee_id = ?")
+            ) {
+                pstmt.setInt(1, employeeId);
+                int rowsAffected = pstmt.executeUpdate();
+
+                // Redirect back to the employees view
+                response.sendRedirect("blockbusterEMS?view=employees");
+                return;
+            } catch (SQLException e) {
+                response.setContentType("text/html");
+                PrintWriter out = response.getWriter();
+                out.println("<p>Error deleting employee: " + e.getMessage() + "</p>");
+                e.printStackTrace(out);
+            }
+        }
 
         // If we get here, something went wrong, redirect to main page
         response.sendRedirect("blockbusterEMS");
@@ -246,6 +266,56 @@ public class EmsServlet extends HttpServlet {
             }
                 
         """);
+
+        // Add the new CSS for delete functionality
+        out.println("""
+            .delete-btn {
+                background-color: #cc0000;
+                color: white;
+                padding: 5px 10px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+            
+            .delete-btn:hover {
+                background-color: #ff0000;
+                box-shadow: 0 0 5px #ff0000;
+            }
+            
+            .delete-confirm-btn {
+                background-color: #cc0000;
+                color: white;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                float: right;
+                margin-top: 10px;
+            }
+            
+            .delete-confirm-btn:hover {
+                background-color: #ff0000;
+                box-shadow: 0 0 5px #ff0000;
+            }
+            
+            .cancel-btn {
+                background-color: #555555;
+                color: white;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                float: left;
+                margin-top: 10px;
+            }
+            
+            .cancel-btn:hover {
+                background-color: #777777;
+                box-shadow: 0 0 5px #777777;
+            }
+        """);
+
         out.println("</style>");
         out.println("</head>");
         out.println("<body>");
@@ -384,15 +454,21 @@ public class EmsServlet extends HttpServlet {
                             "    <th onclick=\"sortTable(3, this)\" data-column=\"3\">Email <span class=\"sort-arrow\"></span></th>\n" +
                             "    <th onclick=\"sortTable(4, this)\" data-column=\"4\">Store ID <span class=\"sort-arrow\"></span></th>\n" +
                             "    <th onclick=\"sortTable(5, this)\" data-column=\"5\">Role ID <span class=\"sort-arrow\"></span></th>\n" +
+                            "    <th>Actions</th>\n" +
                             "</tr>\n");
                     while (rs.next()) {
-                        out.printf("<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%d</td><td>%d</td></tr>",
-                                rs.getString("employee_id"),
+                        String employeeId = rs.getString("employee_id");
+                        out.printf("<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%d</td><td>%d</td>" +
+                                        "<td><button type='button' class='delete-btn' data-id='%s' data-name='%s %s'>Delete</button></td></tr>",
+                                employeeId,
                                 rs.getString("first_name"),
                                 rs.getString("last_name"),
                                 rs.getString("email"),
                                 rs.getInt("store_id"),
-                                rs.getInt("role_id"));
+                                rs.getInt("role_id"),
+                                employeeId,
+                                rs.getString("first_name"),
+                                rs.getString("last_name"));
                     }
                     out.println("</table>");
 
@@ -449,6 +525,23 @@ public class EmsServlet extends HttpServlet {
                     out.println("        <button type='submit' class='add-btn'>Add Employee</button>");
                     out.println("      </div>");
                     out.println("    </form>");
+                    out.println("  </div>");
+                    out.println("</div>");
+
+                    // Confirmation Modal for Delete
+                    out.println("<div id='deleteModal' class='modal'>");
+                    out.println("  <div class='modal-content'>");
+                    out.println("    <span class='close' id='closeDeleteModal'>&times;</span>");
+                    out.println("    <h3>Confirm Deletion</h3>");
+                    out.println("    <p>Are you sure you want to delete employee <span id='employeeToDelete'></span>?</p>");
+                    out.println("    <div class='clearfix'>");
+                    out.println("      <form action='blockbusterEMS' method='post'>");
+                    out.println("        <input type='hidden' name='action' value='deleteEmployee'>");
+                    out.println("        <input type='hidden' id='deleteEmployeeId' name='employeeId' value=''>");
+                    out.println("        <button type='button' id='cancelDelete' class='cancel-btn'>Cancel</button>");
+                    out.println("        <button type='submit' class='delete-confirm-btn'>Delete</button>");
+                    out.println("      </form>");
+                    out.println("    </div>");
                     out.println("  </div>");
                     out.println("</div>");
             }
@@ -539,6 +632,53 @@ public class EmsServlet extends HttpServlet {
                         modal.style.display = "none";
                     }
                 }
+                
+                // Delete employee functionality
+                // Get the delete modal
+                var deleteModal = document.getElementById('deleteModal');
+                
+                // Get the span element that closes the modal
+                var closeDeleteBtn = document.getElementById('closeDeleteModal');
+                
+                // Get the cancel button
+                var cancelDeleteBtn = document.getElementById('cancelDelete');
+                
+                // Add event listeners to all delete buttons
+                document.querySelectorAll('.delete-btn').forEach(function(button) {
+                    button.addEventListener('click', function() {
+                        // Get employee ID and name from data attributes
+                        var employeeId = this.getAttribute('data-id');
+                        var employeeName = this.getAttribute('data-name');
+                        
+                        // Set values in the modal
+                        document.getElementById('deleteEmployeeId').value = employeeId;
+                        document.getElementById('employeeToDelete').textContent = employeeName + " (ID: " + employeeId + ")";
+                        
+                        // Show the modal
+                        deleteModal.style.display = "block";
+                    });
+                });
+                
+                // Close the modal when x is clicked
+                if (closeDeleteBtn) {
+                    closeDeleteBtn.onclick = function() {
+                        deleteModal.style.display = "none";
+                    }
+                }
+                
+                // Close the modal when cancel is clicked
+                if (cancelDeleteBtn) {
+                    cancelDeleteBtn.onclick = function() {
+                        deleteModal.style.display = "none";
+                    }
+                }
+                
+                // Close the modal when clicked outside
+                window.addEventListener('click', function(event) {
+                    if (event.target == deleteModal) {
+                        deleteModal.style.display = "none";
+                    }
+                });
             });
         """);
         out.println("</script>");
