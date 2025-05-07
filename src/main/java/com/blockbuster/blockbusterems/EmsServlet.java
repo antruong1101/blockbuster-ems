@@ -261,6 +261,7 @@ public class EmsServlet extends HttpServlet {
             }
             
             .sort-arrow {
+            
                 font-size: 0.8em;
                 margin-left: 4px;
             }
