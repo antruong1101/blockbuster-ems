@@ -30,6 +30,7 @@ public class EmsServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
         // Handle form submissions for adding a new employee
         String action = request.getParameter("action");
 
@@ -63,6 +64,7 @@ public class EmsServlet extends HttpServlet {
                 e.printStackTrace(out);
             }
         }
+        //Handles the action of deleting and employee from employee table
         else if ("deleteEmployee".equals(action)) {
             int employeeId = Integer.parseInt(request.getParameter("employeeId"));
 
@@ -83,8 +85,40 @@ public class EmsServlet extends HttpServlet {
                 e.printStackTrace(out);
             }
         }
+        //Handles the action of updating an employee from an employees table
+        else if ("updateEmployee".equals(action)) {
+            int employeeId = Integer.parseInt(request.getParameter("employeeId"));
+            String firstName = request.getParameter("firstName");
+            String lastName = request.getParameter("lastName");
+            String email = request.getParameter("email");
+            int storeId = Integer.parseInt(request.getParameter("storeId"));
+            int roleId = Integer.parseInt(request.getParameter("roleId"));
 
-        // If we get here, something went wrong, redirect to main page
+            try (Connection conn = DatabaseConnection.getConnection();
+                 PreparedStatement pstmt = conn.prepareStatement(
+                         "UPDATE employees SET first_name = ?, last_name = ?, email = ?, store_id = ?, role_id = ? WHERE employee_id = ?")
+            ) {
+                pstmt.setString(1, firstName);
+                pstmt.setString(2, lastName);
+                pstmt.setString(3, email);
+                pstmt.setInt(4, storeId);
+                pstmt.setInt(5, roleId);
+                pstmt.setInt(6, employeeId);
+
+                pstmt.executeUpdate();
+
+                // Redirect back to the employees view
+                response.sendRedirect("blockbusterEMS?view=employees");
+                return;
+            } catch (SQLException e) {
+                response.setContentType("text/html");
+                PrintWriter out = response.getWriter();
+                out.println("<p>Error updating employee: " + e.getMessage() + "</p>");
+                e.printStackTrace(out);
+            }
+        }
+
+        //Error has occurred with one of the submissions or actions, return to the main page
         response.sendRedirect("blockbusterEMS");
     }
 
@@ -315,8 +349,42 @@ public class EmsServlet extends HttpServlet {
                 background-color: #777777;
                 box-shadow: 0 0 5px #777777;
             }
+            .edit-btn {
+                background-color: #0066cc;
+                color: white;
+                padding: 5px 10px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                margin-right: 5px;
+             }
+                
+             .edit-btn:hover {
+                background-color: #0099ff;
+                box-shadow: 0 0 5px #0099ff;
+             }
+                
+             .update-btn {
+                background-color: #0066cc;
+                color: white;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                float: right;
+                margin-top: 10px;
+             }
+                
+              .update-btn:hover {
+                 background-color: #0099ff;
+                 box-shadow: 0 0 5px #0099ff;
+             }
+                
+              .action-buttons {
+                 display: flex;
+                 gap: 5px;
+             }
         """);
-
         out.println("</style>");
         out.println("</head>");
         out.println("<body>");
@@ -355,7 +423,7 @@ public class EmsServlet extends HttpServlet {
 
             ResultSet rs;
 
-            // This switch handles which table to view
+            // This switch handles which table to view using the navbar at the top
             switch (view) {
                 case "roles":
                     rs = stmt.executeQuery("SELECT * FROM roles");
@@ -459,17 +527,21 @@ public class EmsServlet extends HttpServlet {
                             "</tr>\n");
                     while (rs.next()) {
                         String employeeId = rs.getString("employee_id");
+                        String firstName = rs.getString("first_name");
+                        String lastName = rs.getString("last_name");
+                        String email = rs.getString("email");
+                        int storeId = rs.getInt("store_id");
+                        int roleId = rs.getInt("role_id");
                         out.printf("<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%d</td><td>%d</td>" +
-                                        "<td><button type='button' class='delete-btn' data-id='%s' data-name='%s %s'>Delete</button></td></tr>",
-                                employeeId,
-                                rs.getString("first_name"),
-                                rs.getString("last_name"),
-                                rs.getString("email"),
-                                rs.getInt("store_id"),
-                                rs.getInt("role_id"),
-                                employeeId,
-                                rs.getString("first_name"),
-                                rs.getString("last_name"));
+                                        "<td class='action-buttons'>" +
+                                        "<button type='button' class='edit-btn' " +
+                                        "data-id='%s' data-firstname='%s' data-lastname='%s' " +
+                                        "data-email='%s' data-storeid='%d' data-roleid='%d'>Edit</button>" +
+                                        "<button type='button' class='delete-btn' data-id='%s' data-name='%s %s'>Delete</button>" +
+                                        "</td></tr>",
+                                employeeId, firstName, lastName, email, storeId, roleId,
+                                employeeId, firstName, lastName, email, storeId, roleId,
+                                employeeId, firstName, lastName);
                     }
                     out.println("</table>");
 
@@ -545,6 +617,63 @@ public class EmsServlet extends HttpServlet {
                     out.println("    </div>");
                     out.println("  </div>");
                     out.println("</div>");
+
+                    // Edit Employee Modal
+                    out.println("<div id='editEmployeeModal' class='modal'>");
+                    out.println("  <div class='modal-content'>");
+                    out.println("    <span class='close' id='closeEditModal'>&times;</span>");
+                    out.println("    <h3>Edit Employee</h3>");
+                    out.println("    <form action='blockbusterEMS' method='post'>");
+                    out.println("      <input type='hidden' name='action' value='updateEmployee'>");
+                    out.println("      <input type='hidden' id='editEmployeeId' name='employeeId' value=''>");
+
+                    out.println("      <div class='form-group'>");
+                    out.println("        <label for='editFirstName'>First Name:</label>");
+                    out.println("        <input type='text' id='editFirstName' name='firstName' required>");
+                    out.println("      </div>");
+
+                    out.println("      <div class='form-group'>");
+                    out.println("        <label for='editLastName'>Last Name:</label>");
+                    out.println("        <input type='text' id='editLastName' name='lastName' required>");
+                    out.println("      </div>");
+
+                    out.println("      <div class='form-group'>");
+                    out.println("        <label for='editEmail'>Email:</label>");
+                    out.println("        <input type='email' id='editEmail' name='email' required>");
+                    out.println("      </div>");
+
+// Store dropdown
+                    out.println("      <div class='form-group'>");
+                    out.println("        <label for='editStoreId'>Store:</label>");
+                    out.println("        <select id='editStoreId' name='storeId' required>");
+                    ResultSet editStoreRs = stmt.executeQuery("SELECT store_id, store_name FROM stores");
+                    while (editStoreRs.next()) {
+                        out.printf("          <option value='%d'>%s</option>",
+                                editStoreRs.getInt("store_id"),
+                                editStoreRs.getString("store_name"));
+                    }
+                    out.println("        </select>");
+                    out.println("      </div>");
+
+// Role dropdown
+                    out.println("      <div class='form-group'>");
+                    out.println("        <label for='editRoleId'>Role:</label>");
+                    out.println("        <select id='editRoleId' name='roleId' required>");
+                    ResultSet editRoleRs = stmt.executeQuery("SELECT role_id, role_name FROM roles");
+                    while (editRoleRs.next()) {
+                        out.printf("          <option value='%d'>%s</option>",
+                                editRoleRs.getInt("role_id"),
+                                editRoleRs.getString("role_name"));
+                    }
+                    out.println("        </select>");
+                    out.println("      </div>");
+
+                    out.println("      <div class='clearfix'>");
+                    out.println("        <button type='submit' class='update-btn'>Update Employee</button>");
+                    out.println("      </div>");
+                    out.println("    </form>");
+                    out.println("  </div>");
+                    out.println("</div>");
             }
 
         } catch (SQLException e) {
@@ -552,7 +681,7 @@ public class EmsServlet extends HttpServlet {
             e.printStackTrace(out);
         }
 
-        // Add JavaScript for sorting and modal functionality
+        //JavaScript for sorting and modal functionality along with updating feature
         out.println("<script>");
         out.println("""
             let currentSortColumn = -1;
@@ -601,9 +730,7 @@ public class EmsServlet extends HttpServlet {
                  arrowSpan.innerHTML = currentSortDirection === "asc" ? "&uarr;" : "&darr;";
              }
          }
-            
-            // Modal JavaScript
-            document.addEventListener('DOMContentLoaded', function() {
+             document.addEventListener('DOMContentLoaded', function() {
                 // Get the modal
                 var modal = document.getElementById('employeeModal');
                 
@@ -679,6 +806,48 @@ public class EmsServlet extends HttpServlet {
                     if (event.target == deleteModal) {
                         deleteModal.style.display = "none";
                     }
+            // Edit employee functionality
+                    // Get the edit modal
+                    var editModal = document.getElementById('editEmployeeModal');
+                
+                    // Get the span element that closes the modal
+                    var closeEditBtn = document.getElementById('closeEditModal');
+                
+                    // Add event listeners to all edit buttons
+                    document.querySelectorAll('.edit-btn').forEach(function(button) {
+                        button.addEventListener('click', function() {
+                            // Get employee data from data attributes
+                            var employeeId = this.getAttribute('data-id');
+                            var firstName = this.getAttribute('data-firstname');
+                            var lastName = this.getAttribute('data-lastname');
+                            var email = this.getAttribute('data-email');
+                            var storeId = this.getAttribute('data-storeid');
+                            var roleId = this.getAttribute('data-roleid');
+                
+                            // Set values in the form
+                            document.getElementById('editEmployeeId').value = employeeId;
+                            document.getElementById('editFirstName').value = firstName;
+                            document.getElementById('editLastName').value = lastName;
+                            document.getElementById('editEmail').value = email;
+                            document.getElementById('editStoreId').value = storeId;
+                            document.getElementById('editRoleId').value = roleId;
+                
+                            editModal.style.display = "block";
+                        });
+                    });
+                
+                    if (closeEditBtn) {
+                        closeEditBtn.onclick = function() {
+                            editModal.style.display = "none";
+                        }
+                    }
+                
+                    // Close the modal when clicked outside
+                    window.addEventListener('click', function(event) {
+                        if (event.target == editModal) {
+                            editModal.style.display = "none";
+                        }
+                    });
                 });
             });
         """);
