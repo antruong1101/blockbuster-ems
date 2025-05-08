@@ -149,7 +149,6 @@ public class EmsServlet extends HttpServlet {
                 color: #ffffcc;
                 margin: 20px;
             }
-            
             h1 {
                 color: #ffcc00;
             }
