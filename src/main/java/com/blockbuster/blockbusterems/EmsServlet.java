@@ -130,13 +130,15 @@ public class EmsServlet extends HttpServlet {
         String view = request.getParameter("view");
         if (view == null) view = "employees";
 
+        //Sorting mechanism for each row
         String sort = request.getParameter("sort");
         String order = request.getParameter("order");
-        if (sort == null) sort = "employee_id"; // default sort
+        if (sort == null) sort = "employee_id";
         if (order == null || (!order.equalsIgnoreCase("asc") && !order.equalsIgnoreCase("desc"))) {
-            order = "asc"; // default order
+            order = "asc";
         }
 
+        //HTML and CSS to style the webpage
         out.println("<!DOCTYPE html>");
         out.println("<html lang='en'>");
         out.println("<head>");
@@ -416,7 +418,7 @@ public class EmsServlet extends HttpServlet {
             </nav>
         """);
 
-
+        //Connection to database
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement()) {
 
